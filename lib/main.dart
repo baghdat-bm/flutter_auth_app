@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'features/auth/presentation/screens/login_screen.dart';
 
 void main() {
   runApp(const AuthApp());
@@ -16,14 +17,7 @@ class AuthApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true, // Используем современный стиль Material 3
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'Hello Windows!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+      home: const LoginScreen(),
     );
   }
 }
