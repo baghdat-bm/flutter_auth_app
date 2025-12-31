@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/datasources/auth_remote_datasource.dart'; // Импорт нашего сервиса
 import 'register_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../../home/home_screen.dart'; // Путь к новому экрану
 
 // Меняем на StatefulWidget, чтобы хранить состояние (текст в полях)
 class LoginScreen extends StatefulWidget {
@@ -18,42 +20,53 @@ class _LoginScreenState extends State<LoginScreen> {
   // Создаем экземпляр нашего сервиса API
   final _authService = AuthRemoteDataSource();
 
+  final _storage = const FlutterSecureStorage();
+
+  bool _isLoading = false;
+
   // Функция для обработки нажатия кнопки "Войти"
   Future<void> _login() async {
     // Простая валидация: если поля пустые, не отправляем запрос
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Заполните email и пароль')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Заполните email и пароль')));
       return;
     }
 
+    // Включаем загрузку и обновляем экран
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      // 2. Вызываем метод API
       final tokenModel = await _authService.login(
         _emailController.text,
         _passwordController.text,
       );
 
-      // Если все прошло успешно:
+      // 1. Сохраняем токен в безопасное хранилище
+      await _storage.write(key: 'auth_token', value: tokenModel.token);
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Успешный вход! Токен: ${tokenModel.token}'),
-            backgroundColor: Colors.green,
-          ),
+        // 2. Переходим на главный экран
+        // pushReplacement означает "заменить текущий экран", чтобы нельзя было вернуться назад кнопкой "Back"
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
-        // Тут можно сохранить токен и перейти на главный экран
       }
     } catch (e) {
-      // Если произошла ошибка:
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()), // Показываем текст ошибки
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
         );
+      }
+    } finally {
+      // В любом случае (успех или ошибка) выключаем загрузку
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -96,17 +109,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _login, // 4. Вызываем нашу функцию
-                  child: const Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text('Войти'),
-                  ),
-                ),
+                // Если идет загрузка - показываем спиннер, иначе кнопку
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: _login,
+                        child: const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text('Войти'),
+                        ),
+                      ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterScreen(),
+                      ),
                     );
                   },
                   child: const Text('Нет аккаунта? Зарегистрироваться'),

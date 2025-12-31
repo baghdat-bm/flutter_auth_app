@@ -11,37 +11,34 @@ class AuthRemoteDataSource {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         // 👇 Добавляем нашу "маскировку" под Chrome:
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
       validateStatus: (status) {
-        return status != null && status < 500; 
+        return status != null && status < 500;
       },
     ),
   );
 
-  // Метод для входа
+  // Метод для входа (MOCK / ЗАГЛУШКА)
   Future<AuthTokenModel> login(String email, String password) async {
-    print('1. Метод login вызван'); // Проверка старта
+    print('1. Метод login вызван (Режим симуляции)');
 
-    try {
-      final response = await _dio.post(
-        '/login',
-        data: {'email': email, 'password': password},
-      );
+    // 1. Имитируем ожидание сети (задержка 1.5 секунды)
+    // Это нужно, чтобы увидеть индикатор загрузки на экране в будущем
+    await Future.delayed(const Duration(milliseconds: 1500));
 
-      print('2. Ответ получен: ${response.data}');
-      print('3. Тип данных ответа: ${response.data.runtimeType}');
-
-      return AuthTokenModel.fromJson(response.data);
-    } catch (e, stackTrace) {
-      // Ловим АБСОЛЮТНО ВСЕ ошибки
-      print('!!! ПРОИЗОШЛА ОШИБКА !!!');
-      print('Текст ошибки: $e');
-      print('Где именно (Stack Trace): $stackTrace');
-
-      // Пробрасываем ошибку дальше, чтобы UI тоже о ней узнал
-      throw Exception('Ошибка в сервисе: $e');
+    // 2. Имитируем проверку пароля (для теста)
+    if (password.length < 4) {
+      // Выбрасываем ошибку, если пароль слишком короткий
+      throw Exception('Пароль слишком короткий!');
     }
+
+    // 3. Возвращаем успешный результат, как будто сервер ответил JSON
+    print('2. Возвращаем фейковый токен');
+    final fakeJson = {'token': 'QpwL5tke4Pnpja7X4'};
+
+    return AuthTokenModel.fromJson(fakeJson);
   }
 
   // Метод для регистрации
