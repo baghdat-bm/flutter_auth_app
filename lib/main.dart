@@ -12,12 +12,32 @@ class AuthApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Убираем ленточку DEBUG
+      debugShowCheckedModeBanner: false,
       title: 'Auth App',
+
+      // 1. Настройка СВЕТЛОЙ темы
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true, // Используем современный стиль Material 3
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue, // Основной цвет
+          brightness: Brightness.light,
+        ),
       ),
+
+      // 2. Настройка ТЕМНОЙ темы
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor:
+              Colors.blue, // Можно выбрать другой, например, Colors.indigo
+          brightness:
+              Brightness.dark, // Главный флаг: генерировать темную палитру
+        ),
+      ),
+
+      // 3. Режим (по умолчанию и так system, но можно указать явно)
+      themeMode: ThemeMode.system,
+
       home: const SplashScreen(),
     );
   }
