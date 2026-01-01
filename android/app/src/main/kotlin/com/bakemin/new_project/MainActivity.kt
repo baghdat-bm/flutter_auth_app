@@ -1,4 +1,4 @@
-package com.example.auth_app
+package com.bakemin.new_project
 
 import io.flutter.embedding.android.FlutterActivity
 

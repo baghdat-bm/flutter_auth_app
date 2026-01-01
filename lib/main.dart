@@ -1,8 +1,10 @@
+import 'package:auth_app/core/di/service_locator.dart';
 import 'package:flutter/material.dart';
 // import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/auth/presentation/screens/splash_screen.dart';
 
 void main() {
+  setupServiceLocator();
   runApp(const AuthApp());
 }
 

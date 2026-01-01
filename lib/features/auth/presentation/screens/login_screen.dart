@@ -3,6 +3,7 @@ import '../../data/datasources/auth_remote_datasource.dart'; // Импорт н�
 import 'register_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../../home/home_screen.dart'; // Путь к новому экрану
+import '../../../../core/di/service_locator.dart'; // Импортируем sl
 
 // Меняем на StatefulWidget, чтобы хранить состояние (текст в полях)
 class LoginScreen extends StatefulWidget {
@@ -17,8 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // Создаем экземпляр нашего сервиса API
-  final _authService = AuthRemoteDataSource();
+  // Берем готовый экземпляр из DI
+  final _authService = sl<AuthRemoteDataSource>();
 
   final _storage = const FlutterSecureStorage();
 
