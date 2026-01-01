@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'features/auth/presentation/screens/login_screen.dart';
+// import 'features/auth/presentation/screens/login_screen.dart';
+import 'features/auth/presentation/screens/splash_screen.dart';
 
 void main() {
   runApp(const AuthApp());
@@ -17,7 +18,7 @@ class AuthApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true, // Используем современный стиль Material 3
       ),
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }
